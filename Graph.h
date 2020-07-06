@@ -8,7 +8,7 @@
 class Graph {
   TriangleBoolSquareMatrix matrix;
 public:
-  Graph(TriangleBoolSquareMatrix matrix);
+  explicit Graph(TriangleBoolSquareMatrix matrix);
 
   [[nodiscard]] size_t countLinksInSubgraph(const vector<size_t> &vertices) const;
 

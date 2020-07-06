@@ -3,6 +3,9 @@
 //
 #pragma once
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "UnusedGlobalDeclarationInspection"
+
 #include <vector>
 #include <iostream>
 
@@ -34,3 +37,5 @@ public:
 
   ostream &printFullSubmatrix(ostream &out, const vector<size_t> &indexes) const;
 };
+
+#pragma clang diagnostic pop

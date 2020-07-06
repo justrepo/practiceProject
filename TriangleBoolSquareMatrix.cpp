@@ -2,6 +2,9 @@
 // Created by nikita on 7/6/20.
 //
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "UnusedGlobalDeclarationInspection"
+
 #include "TriangleBoolSquareMatrix.h"
 #include <stdexcept>
 
@@ -95,4 +98,4 @@ ostream &TriangleBoolSquareMatrix::printTriangleSubmatrix(ostream &out, const ve
   return out;
 }
 
-
+#pragma clang diagnostic pop
