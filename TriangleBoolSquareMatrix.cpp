@@ -40,17 +40,17 @@ std::vector<bool>::reference TriangleBoolSquareMatrix::unsafeAt(size_t i, size_t
 }
 
 ostream &operator<<(ostream &out, const TriangleBoolSquareMatrix &matrix) {
-  for (size_t i = 1; i < matrix.n; ++i) {
+  return matrix.printTriangle(out);
+}
+
+ostream &TriangleBoolSquareMatrix::printTriangle(ostream &out) const {
+  for (size_t i = 1; i < n; ++i) {
     for (size_t j = 0; j < i; ++j) {
-      out << matrix.at(i, j) << " ";
+      out << at(i, j) << " ";
     }
     out << endl;
   }
   return out;
-}
-
-ostream &TriangleBoolSquareMatrix::printTriangle(ostream &out) const {
-  return out << *this;
 }
 
 ostream &TriangleBoolSquareMatrix::printFull(ostream &out) const {
@@ -96,6 +96,92 @@ ostream &TriangleBoolSquareMatrix::printTriangleSubmatrix(ostream &out, const ve
   }
 
   return out;
+}
+
+void TriangleBoolSquareMatrix::writeToStream(ostream &out) const {
+  out.write(reinterpret_cast<const char *>(&n), sizeof n);
+
+  unsigned char c = 0;
+  size_t num = 0;
+  for (size_t i = 1; i < n; ++i) {
+    for (size_t j = 0; j < i; ++j) {
+      if (at(i, j)) {
+        c += static_cast<unsigned char>(1u << num);
+      }
+      ++num;
+      if (num == 8) {
+        out.put(char(c));
+        num = 0;
+        c = 0;
+      }
+    }
+  }
+
+  out.put(char(c));
+}
+
+void TriangleBoolSquareMatrix::readFromStream(istream &in) {
+  in.read(reinterpret_cast<char *>(&n), sizeof n);
+
+  data.resize(n * (n - 1) / 2);
+
+  auto c = static_cast<unsigned char>(in.get());
+  size_t num = 0;
+  for (size_t i = 1; i < n; ++i) {
+    for (size_t j = 0; j < i; ++j) {
+      if (c & 1u) {
+        at(i, j) = true;
+      }
+      c >>= 1u;
+      ++num;
+      if (num == 8) {
+        c = static_cast<unsigned char>(in.get());
+        num = 0;
+      }
+    }
+  }
+}
+
+bool TriangleBoolSquareMatrix::operator==(const TriangleBoolSquareMatrix &second) const {
+  return n == second.n && data == second.data;
+}
+
+void TriangleBoolSquareMatrix::writeToStreamTriangle(ostream &out) const {
+  out << n << endl;
+  printTriangle(out);
+}
+
+void TriangleBoolSquareMatrix::readFromStreamTriangle(istream &in) {
+  in >> n;
+
+  int read;
+  data.resize(n * (n - 1) / 2);
+  for (size_t i = 1; i < n; ++i) {
+    for (size_t j = 0; j < i; ++j) {
+      in >> read;
+      at(i, j) = read;
+    }
+  }
+}
+
+void TriangleBoolSquareMatrix::writeToStreamFull(ostream &out) const {
+  out << n << endl;
+  printFull(out);
+}
+
+void TriangleBoolSquareMatrix::readFromStreamFull(istream &in) {
+  in >> n;
+
+  int read;
+  data.resize(n * (n - 1) / 2);
+  for (size_t i = 0; i < n; ++i) {
+    for (size_t j = 0; j < n; ++j) {
+      in >> read;
+      if (i > 0 && i > j) {
+        at(i, j) = read;
+      }
+    }
+  }
 }
 
 #pragma clang diagnostic pop
