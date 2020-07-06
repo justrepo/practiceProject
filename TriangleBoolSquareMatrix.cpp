@@ -184,4 +184,8 @@ void TriangleBoolSquareMatrix::readFromStreamFull(istream &in) {
   }
 }
 
+size_t TriangleBoolSquareMatrix::getDimension() const {
+  return n;
+}
+
 #pragma clang diagnostic pop

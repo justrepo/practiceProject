@@ -17,3 +17,7 @@ size_t Graph::countEdgesInSubgraph(const vector<size_t> &vertices) const {
 }
 
 Graph::Graph(TriangleBoolSquareMatrix matrix) : matrix(std::move(matrix)) {}
+
+TriangleBoolSquareMatrix Graph::getMatrix() const {
+  return matrix;
+}

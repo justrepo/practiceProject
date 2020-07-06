@@ -53,30 +53,39 @@ TriangleBoolSquareMatrix getRandomMatrix(size_t n) {
   return matrix;
 }
 
+vector<size_t> findSubgraphWithMaxEdges(const Graph &graph, size_t targetVerticesNumber) {
+  vector<size_t> vertices(targetVerticesNumber);
+  iota(vertices.begin(), vertices.end(), 0);
+
+  size_t maxEdges = 0;
+  vector<size_t> verticesForMax;
+
+  auto graphVerticesNumber = graph.getMatrix().getDimension();
+
+  do {
+    auto edges = graph.countEdgesInSubgraph(vertices);
+    if (edges > maxEdges) {
+      maxEdges = edges;
+      verticesForMax = vertices;
+    }
+  } while (nextCombination(vertices, graphVerticesNumber));
+
+  return verticesForMax;
+}
+
 int main() {
-  const size_t n = 8;
+  const size_t n = 15;
   auto matrix = getRandomMatrix(n);
 
   Graph graph(matrix);
 
-  vector<size_t> vertices{0};
   auto start = cr::high_resolution_clock::now(), end = start;
   for (size_t i = 2; i <= n; ++i) {
-    vertices.push_back(0);
-    iota(vertices.begin(), vertices.end(), 0);
-
-    size_t maxEdges = 0;
-    vector<size_t> verticesForMax;
-
     start = cr::high_resolution_clock::now();
-    do {
-      auto edges = graph.countEdgesInSubgraph(vertices);
-      if (edges > maxEdges) {
-        maxEdges = edges;
-        verticesForMax = vertices;
-      }
-    } while (nextCombination(vertices, n));
+    auto verticesForMax = findSubgraphWithMaxEdges(graph, i);
     end = cr::high_resolution_clock::now();
+
+    auto maxEdges = graph.countEdgesInSubgraph(verticesForMax);
 
     cout << "for k = " << i << " max links = " << maxEdges << " for, for example, vertices " << verticesForMax << endl;
     cout << "matrix with that vertices: " << endl;

@@ -22,6 +22,8 @@ public:
 
   explicit TriangleBoolSquareMatrix(size_t n);
 
+  size_t getDimension() const;
+
   [[nodiscard]] bool at(size_t i, size_t j) const;
 
   [[nodiscard]] bool unsafeAt(size_t i, size_t j) const;
