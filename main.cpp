@@ -2,6 +2,7 @@
 #include <numeric>
 #include <random>
 #include <chrono>
+#include <fstream>
 #include "Graph.h"
 
 using namespace std;
@@ -53,9 +54,8 @@ TriangleBoolSquareMatrix getRandomMatrix(size_t n) {
 }
 
 int main() {
-  const size_t n = 30;
+  const size_t n = 8;
   auto matrix = getRandomMatrix(n);
-  matrix.printFull(cout) << endl;
 
   Graph graph(matrix);
 
@@ -65,20 +65,20 @@ int main() {
     vertices.push_back(0);
     iota(vertices.begin(), vertices.end(), 0);
 
-    size_t maxLinks = 0;
+    size_t maxEdges = 0;
     vector<size_t> verticesForMax;
 
     start = cr::high_resolution_clock::now();
     do {
-      auto links = graph.countLinksInSubgraph(vertices);
-      if (links > maxLinks) {
-        maxLinks = links;
+      auto edges = graph.countEdgesInSubgraph(vertices);
+      if (edges > maxEdges) {
+        maxEdges = edges;
         verticesForMax = vertices;
       }
     } while (nextCombination(vertices, n));
     end = cr::high_resolution_clock::now();
 
-    cout << "for k = " << i << " max links = " << maxLinks << " for, for example, vertices " << verticesForMax << endl;
+    cout << "for k = " << i << " max links = " << maxEdges << " for, for example, vertices " << verticesForMax << endl;
     cout << "matrix with that vertices: " << endl;
     matrix.printFullSubmatrix(cout, verticesForMax) << endl;
     cout << "it took " << (end - start).count() << "ns = " << double((end - start).count()) * 1e-9 << "s" << endl;
