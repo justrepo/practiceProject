@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# IDEA local config
+.idea/workspace.xml
+
+# CMake local cache, Compiled Object files and executables
+cmake-build-debug
