@@ -54,3 +54,21 @@ size_t numberOfCombinations(size_t n, size_t k) {
 
   return result;
 }
+
+bool isSorted(const vector<size_t> &elements) {
+  if (elements.size() < 2) {
+    return true;
+  } else {
+    auto it = elements.begin();
+    auto lastElement = *it;
+    ++it;
+    for (; it != elements.end(); ++it) {
+      if (lastElement >= *it) {
+        return false;
+      }
+      lastElement = *it;
+    }
+    return true;
+  }
+}
+
