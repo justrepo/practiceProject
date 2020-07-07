@@ -3,6 +3,9 @@
 //
 #pragma once
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "UnusedGlobalDeclarationInspection"
+
 #include "TriangleBoolSquareMatrix.h"
 
 class Graph {
@@ -14,5 +17,7 @@ public:
 
   [[nodiscard]] TriangleBoolSquareMatrix getMatrix() const;
 
-  vector<size_t> findSubgraphWithMaxEdges(size_t targetVerticesNumber) const;
+  [[nodiscard]] vector<size_t> findSubgraphWithMaxEdges(size_t targetVerticesNumber) const;
 };
+
+#pragma clang diagnostic pop

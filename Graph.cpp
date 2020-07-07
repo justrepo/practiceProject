@@ -1,6 +1,8 @@
 //
 // Created by nikita on 7/6/20.
 //
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "UnusedGlobalDeclarationInspection"
 
 #include "Graph.h"
 #include "combinatorialUtils.h"
@@ -45,3 +47,6 @@ vector<size_t> Graph::findSubgraphWithMaxEdges(size_t targetVerticesNumber) cons
 
   return verticesForMax;
 }
+
+
+#pragma clang diagnostic pop
