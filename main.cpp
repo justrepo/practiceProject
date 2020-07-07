@@ -2,29 +2,11 @@
 #include <numeric>
 #include <random>
 #include <chrono>
-#include <fstream>
 #include "Graph.h"
+#include "combinatorialUtils.h"
 
 using namespace std;
 namespace cr = std::chrono;
-
-bool nextCombination(vector<size_t> &collection, size_t maxValue) {
-  if (++collection.back() == maxValue) {
-    size_t i = collection.size() - 1, currentMaxValue = maxValue;
-    for (; i > 0 && collection[i] == currentMaxValue; --i) {
-      ++collection[i - 1];
-      --currentMaxValue;
-    }
-    if (i == 0 && collection.front() == currentMaxValue) {
-      return false;
-    }
-    ++i;
-    for (; i < collection.size(); ++i) {
-      collection[i] = collection[i - 1] + 1;
-    }
-  }
-  return true;
-}
 
 ostream &operator<<(ostream &out, const vector<size_t> &arr) {
   if (arr.empty()) {

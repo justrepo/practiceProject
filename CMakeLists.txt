@@ -3,7 +3,7 @@ project(graphTest)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(graphTest main.cpp Graph.cpp Graph.h TriangleBoolSquareMatrix.cpp TriangleBoolSquareMatrix.h)
+add_executable(graphTest main.cpp Graph.cpp Graph.h TriangleBoolSquareMatrix.cpp TriangleBoolSquareMatrix.h combinatorialUtils.h combinatorialUtils.cpp)
 
 if (NOT CMAKE_CXX_FLAGS STREQUAL "")
     string(REPLACE " " ";" CMAKE_CXX_FLAGS_LIST ${CMAKE_CXX_FLAGS})
@@ -41,3 +41,5 @@ list(APPEND CMAKE_CXX_FLAGS_DEBUG_LIST
         -Wsign-conversion
         -Wsign-promo)
 list(JOIN CMAKE_CXX_FLAGS_DEBUG_LIST " " CMAKE_CXX_FLAGS_DEBUG)
+
+add_subdirectory(Tests)
