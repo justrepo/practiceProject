@@ -12,5 +12,5 @@ public:
 
   [[nodiscard]] size_t countEdgesInSubgraph(const vector<size_t> &vertices) const;
 
-  TriangleBoolSquareMatrix getMatrix() const;
+  [[nodiscard]] TriangleBoolSquareMatrix getMatrix() const;
 };

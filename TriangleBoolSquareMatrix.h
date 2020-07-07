@@ -22,7 +22,7 @@ public:
 
   explicit TriangleBoolSquareMatrix(size_t n);
 
-  size_t getDimension() const;
+  [[nodiscard]] size_t getDimension() const;
 
   [[nodiscard]] bool at(size_t i, size_t j) const;
 
