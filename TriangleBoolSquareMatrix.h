@@ -12,7 +12,6 @@
 using std::vector;
 using std::ostream;
 using std::istream;
-using std::endl;
 
 class TriangleBoolSquareMatrix {
   size_t n = 0;
@@ -21,6 +20,8 @@ public:
   TriangleBoolSquareMatrix() = default;
 
   explicit TriangleBoolSquareMatrix(size_t n);
+
+  void randomInit();
 
   [[nodiscard]] size_t getDimension() const;
 

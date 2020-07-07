@@ -1,9 +1,6 @@
 #include <iostream>
-#include <numeric>
-#include <random>
 #include <chrono>
 #include "Graph.h"
-#include "combinatorialUtils.h"
 
 using namespace std;
 namespace cr = std::chrono;
@@ -20,51 +17,17 @@ ostream &operator<<(ostream &out, const vector<size_t> &arr) {
   }
 }
 
-TriangleBoolSquareMatrix getRandomMatrix(size_t n) {
-  TriangleBoolSquareMatrix matrix(n);
-
-  static mt19937 twisterEngine((random_device()()));
-  static bernoulli_distribution distribution;
-
-  for (size_t i = 1; i < n; ++i) {
-    for (size_t j = 0; j < i; ++j) {
-      matrix.at(i, j) = distribution(twisterEngine);
-    }
-  }
-
-  return matrix;
-}
-
-vector<size_t> findSubgraphWithMaxEdges(const Graph &graph, size_t targetVerticesNumber) {
-  vector<size_t> vertices(targetVerticesNumber);
-  iota(vertices.begin(), vertices.end(), 0);
-
-  size_t maxEdges = 0;
-  vector<size_t> verticesForMax;
-
-  auto graphVerticesNumber = graph.getMatrix().getDimension();
-
-  do {
-    auto edges = graph.countEdgesInSubgraph(vertices);
-    if (edges > maxEdges) {
-      maxEdges = edges;
-      verticesForMax = vertices;
-    }
-  } while (nextCombination(vertices, graphVerticesNumber));
-
-  return verticesForMax;
-}
-
 int main() {
   const size_t n = 15;
-  auto matrix = getRandomMatrix(n);
+  auto matrix = TriangleBoolSquareMatrix(n);
+  matrix.randomInit();
 
   Graph graph(matrix);
 
   auto start = cr::high_resolution_clock::now(), end = start;
   for (size_t i = 2; i <= n; ++i) {
     start = cr::high_resolution_clock::now();
-    auto verticesForMax = findSubgraphWithMaxEdges(graph, i);
+    auto verticesForMax = graph.findSubgraphWithMaxEdges(i);
     end = cr::high_resolution_clock::now();
 
     auto maxEdges = graph.countEdgesInSubgraph(verticesForMax);

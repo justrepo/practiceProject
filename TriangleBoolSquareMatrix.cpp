@@ -1,15 +1,19 @@
 //
 // Created by nikita on 7/6/20.
 //
-
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "UnusedGlobalDeclarationInspection"
 
 #include "TriangleBoolSquareMatrix.h"
 #include <stdexcept>
+#include <random>
 
+using std::endl;
 using std::out_of_range;
 using std::to_string;
+using std::random_device;
+using std::mt19937;
+using std::bernoulli_distribution;
 
 TriangleBoolSquareMatrix::TriangleBoolSquareMatrix(size_t n) : n(n), data(n * (n - 1) / 2) {}
 
@@ -186,6 +190,17 @@ void TriangleBoolSquareMatrix::readFromStreamFull(istream &in) {
 
 size_t TriangleBoolSquareMatrix::getDimension() const {
   return n;
+}
+
+void TriangleBoolSquareMatrix::randomInit() {
+  static mt19937 twisterEngine((random_device()()));
+  static bernoulli_distribution distribution;
+
+  for (size_t i = 1; i < n; ++i) {
+    for (size_t j = 0; j < i; ++j) {
+      at(i, j) = distribution(twisterEngine);
+    }
+  }
 }
 
 #pragma clang diagnostic pop

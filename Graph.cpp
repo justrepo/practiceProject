@@ -3,6 +3,10 @@
 //
 
 #include "Graph.h"
+#include "combinatorialUtils.h"
+#include <numeric>
+
+using std::iota;
 
 size_t Graph::countEdgesInSubgraph(const vector<size_t> &vertices) const {
   size_t result = 0;
@@ -20,4 +24,24 @@ Graph::Graph(TriangleBoolSquareMatrix matrix) : matrix(std::move(matrix)) {}
 
 TriangleBoolSquareMatrix Graph::getMatrix() const {
   return matrix;
+}
+
+vector<size_t> Graph::findSubgraphWithMaxEdges(size_t targetVerticesNumber) const {
+  vector<size_t> vertices(targetVerticesNumber);
+  iota(vertices.begin(), vertices.end(), 0);
+
+  size_t maxEdges = 0;
+  vector<size_t> verticesForMax;
+
+  auto graphVerticesNumber = matrix.getDimension();
+
+  do {
+    auto edges = countEdgesInSubgraph(vertices);
+    if (edges > maxEdges) {
+      maxEdges = edges;
+      verticesForMax = vertices;
+    }
+  } while (nextCombination(vertices, graphVerticesNumber));
+
+  return verticesForMax;
 }

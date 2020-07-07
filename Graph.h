@@ -13,4 +13,6 @@ public:
   [[nodiscard]] size_t countEdgesInSubgraph(const vector<size_t> &vertices) const;
 
   [[nodiscard]] TriangleBoolSquareMatrix getMatrix() const;
+
+  vector<size_t> findSubgraphWithMaxEdges(size_t targetVerticesNumber) const;
 };
