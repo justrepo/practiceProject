@@ -105,7 +105,9 @@ TEST_CASE("Test combination of collection", "[combination]") {
 
     REQUIRE_FALSE(nextCombination(elements, 2));
     REQUIRE(elements.empty());
-  }SECTION("Test for collection with one element") {
+  }
+
+  SECTION("Test for collection with one element") {
     vector<size_t> elements{0};
 
     REQUIRE_FALSE(nextCombination(elements, 0));
@@ -131,7 +133,9 @@ TEST_CASE("Test combination of collection", "[combination]") {
     REQUIRE_FALSE(nextCombination(elements, 3));
     REQUIRE(elements.size() == 1);
     REQUIRE(elements.back() == 3);
-  }SECTION("Test for all collections with 2 to 10 elements") {
+  }
+
+  SECTION("Test for all collections with 2 to 10 elements") {
     auto n = GENERATE(range(2ul, 11ul));
     auto k = GENERATE_COPY(range(1ul, n + 1));
     vector<size_t> elements(k);
