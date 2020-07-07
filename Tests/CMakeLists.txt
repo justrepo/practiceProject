@@ -1,0 +1,1 @@
+add_executable(CatchTests CatchMain.cpp CombinationTests.cpp ../combinatorialUtils.h ../combinatorialUtils.cpp)
