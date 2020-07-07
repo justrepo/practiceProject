@@ -32,18 +32,18 @@ vector<size_t> Graph::findSubgraphWithMaxEdges(size_t targetVerticesNumber) cons
   vector<size_t> vertices(targetVerticesNumber);
   iota(vertices.begin(), vertices.end(), 0);
 
-  size_t maxEdges = 0;
-  vector<size_t> verticesForMax;
+  size_t maxEdges = countEdgesInSubgraph(vertices);
+  vector<size_t> verticesForMax = vertices;
 
   auto graphVerticesNumber = matrix.getDimension();
 
-  do {
+  while (nextCombination(vertices, graphVerticesNumber)) {
     auto edges = countEdgesInSubgraph(vertices);
     if (edges > maxEdges) {
       maxEdges = edges;
       verticesForMax = vertices;
     }
-  } while (nextCombination(vertices, graphVerticesNumber));
+  }
 
   return verticesForMax;
 }
