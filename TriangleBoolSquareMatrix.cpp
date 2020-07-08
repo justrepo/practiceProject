@@ -10,6 +10,7 @@
 
 using std::endl;
 using std::out_of_range;
+using std::runtime_error;
 using std::to_string;
 using std::random_device;
 using std::mt19937;
@@ -126,6 +127,9 @@ void TriangleBoolSquareMatrix::writeToStream(ostream &out) const {
 
 void TriangleBoolSquareMatrix::readFromStream(istream &in) {
   in.read(reinterpret_cast<char *>(&n), sizeof n);
+  if (!in) {
+    throw runtime_error("IO error while reading matrix from stream");
+  }
 
   data.resize(n * (n - 1) / 2);
 
@@ -133,9 +137,11 @@ void TriangleBoolSquareMatrix::readFromStream(istream &in) {
   size_t num = 0;
   for (size_t i = 1; i < n; ++i) {
     for (size_t j = 0; j < i; ++j) {
-      if (c & 1u) {
-        at(i, j) = true;
+      if (!in) {
+        throw runtime_error("IO error while reading matrix from stream");
       }
+      at(i, j) = (c & 1u) != 0;
+
       c >>= 1u;
       ++num;
       if (num == 8) {
