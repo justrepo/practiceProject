@@ -48,5 +48,9 @@ vector<size_t> Graph::findSubgraphWithMaxEdges(size_t targetVerticesNumber) cons
   return verticesForMax;
 }
 
+void Graph::setMatrix(TriangleBoolSquareMatrix newMatrix) {
+  matrix = std::move(newMatrix);
+}
+
 
 #pragma clang diagnostic pop

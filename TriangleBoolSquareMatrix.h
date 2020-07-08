@@ -21,6 +21,8 @@ public:
 
   explicit TriangleBoolSquareMatrix(size_t n);
 
+  void setDimension(size_t newN);
+
   void randomInit();
 
   [[nodiscard]] size_t getDimension() const;

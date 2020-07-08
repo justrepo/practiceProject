@@ -203,4 +203,9 @@ void TriangleBoolSquareMatrix::randomInit() {
   }
 }
 
+void TriangleBoolSquareMatrix::setDimension(size_t newN) {
+  n = newN;
+  data.resize(n * (n - 1) / 2);
+}
+
 #pragma clang diagnostic pop
