@@ -5,7 +5,6 @@
 #pragma ide diagnostic ignored "UnusedGlobalDeclarationInspection"
 
 #include "TriangleBoolSquareMatrix.h"
-#include <stdexcept>
 #include <random>
 
 using std::endl;
