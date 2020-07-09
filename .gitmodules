@@ -1,0 +1,3 @@
+[submodule "ParallelTreeTemplate"]
+	path = ParallelTreeTemplate
+	url = https://github.com/czen/ParallelTreeTemplate.git

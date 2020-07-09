@@ -3,7 +3,7 @@ project(graphTest)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(graphTest main.cpp Graph.cpp Graph.h TriangleBoolSquareMatrix.cpp TriangleBoolSquareMatrix.h combinatorialUtils.h combinatorialUtils.cpp)
+add_executable(graphTest main.cpp Graph.cpp Graph.h TriangleBoolSquareMatrix.cpp TriangleBoolSquareMatrix.h combinatorialUtils.h combinatorialUtils.cpp ParallelTreeSolution.h ParallelTreeSolution.cpp)
 
 if (NOT CMAKE_CXX_FLAGS STREQUAL "")
     string(REPLACE " " ";" CMAKE_CXX_FLAGS_LIST ${CMAKE_CXX_FLAGS})
@@ -43,3 +43,10 @@ list(APPEND CMAKE_CXX_FLAGS_DEBUG_LIST
 list(JOIN CMAKE_CXX_FLAGS_DEBUG_LIST " " CMAKE_CXX_FLAGS_DEBUG)
 
 add_subdirectory(Tests)
+if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    if (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86")
+        target_link_libraries(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/ParallelTreeTemplate/lib/Linux_x86/libParallelTree.so)
+    elseif (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+        target_link_libraries(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/ParallelTreeTemplate/lib/Linux_x86_64/libParallelTree.so)
+    endif ()
+endif ()

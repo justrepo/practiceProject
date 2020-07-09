@@ -2,6 +2,7 @@
 #include <fstream>
 #include <chrono>
 #include "Graph.h"
+#include "ParallelTreeSolution.h"
 
 using namespace std;
 using timer = std::chrono::high_resolution_clock;
@@ -41,12 +42,26 @@ void printInfo() {
 void printUsage(const string &programPath) {
   cout << "Usage: " << programPath
        << " matrixFileName numberOfVertices [algorithm] [numberOfRepeats] [matrixInTextForm]\n" <<
-       " where algorithm can be 1 for recursion, 2 for stack, stack is set by default" << endl;
+       " where algorithm can be 1 for recursion, 2 for stack, 3 for parallel tree, stack is set by default" << endl;
 }
 
-#include <cmath>
-
 int main(int argc, char **argv) {
+  /*ifstream in("/home/nikita/Projects/CLionProjects/graphTest/cmake-build-debug/somename");
+  matrix.readFromStream(in);
+  for (size_t verticesNum = 0; verticesNum <= 20; ++verticesNum) {
+    Graph graph(matrix);
+
+    size_t result = 0;
+    vector<size_t> vertices;
+    for (size_t i = 0; i < 10; ++i) {
+      auto timeBeforeStart = timer::now();
+      vertices = graph.findSubgraphWithMaxEdges(verticesNum, Graph::AlgorithmType::SOMETHING);
+      auto timeAfterEnd = timer::now();
+      result += size_t((timeAfterEnd - timeBeforeStart).count()) / 10;
+    }
+    cout << log(result) << ", ";
+  }
+  return 0;*/
   if (argc == 1) {
     cin.exceptions(ios_base::failbit | ios_base::badbit);
 
@@ -179,8 +194,9 @@ int main(int argc, char **argv) {
             if (n > matrix.getDimension()) {
               cout << "Subgraph cannot contain more vertices than the graph" << endl;
             } else {
-              cout << "Choise algorithm:\n"
+              cout << "Choice algorithm:\n"
                    << "1 - recursion\n"
+                   << "2 - parallel tree\n"
                    << "else - stack" << endl;
 
               cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -193,8 +209,13 @@ int main(int argc, char **argv) {
                 type = Graph::AlgorithmType::STACK;
               }
 
+              vector<size_t> vertices;
               auto timeBeforeStart = timer::now();
-              auto vertices = graph.findSubgraphWithMaxEdges(n, type);
+              if (input == '2') {
+                vertices = findSubgraphWithMaxEdgesUsingParallelTree(n, graph);
+              } else {
+                vertices = graph.findSubgraphWithMaxEdges(n, type);
+              }
               auto timeAfterEnd = timer::now();
               cout << "Finished in " << (timeAfterEnd - timeBeforeStart).count() << "ns = "
                    << double((timeAfterEnd - timeBeforeStart).count()) * 1e-9 << "s" << endl;
@@ -233,12 +254,15 @@ int main(int argc, char **argv) {
       return 0;
     }
     Graph::AlgorithmType type = Graph::AlgorithmType::STACK;
+    bool parallelTree = false;
     if (argc >= 4) {
       string arg3 = argv[3];
       if (arg3 == "1") {
         type = Graph::AlgorithmType::RECURSION;
       } else if (arg3 == "2") {
         type = Graph::AlgorithmType::STACK;
+      } else if (arg3 == "3") {
+        parallelTree = true;
       } else {
         cout << arg3 << " isn't a valid algorithm" << endl;
         printUsage(argv[0]);
@@ -276,7 +300,11 @@ int main(int argc, char **argv) {
       vector<size_t> vertices;
       for (size_t i = 0; i < repeatsNum; ++i) {
         auto timeBeforeStart = timer::now();
-        vertices = graph.findSubgraphWithMaxEdges(verticesNum, type);
+        if (parallelTree) {
+          vertices = findSubgraphWithMaxEdgesUsingParallelTree(verticesNum, graph);
+        } else {
+          vertices = graph.findSubgraphWithMaxEdges(verticesNum, type);
+        }
         auto timeAfterEnd = timer::now();
         result += size_t((timeAfterEnd - timeBeforeStart).count()) / repeatsNum;
       }

@@ -3,8 +3,8 @@
 //
 
 #include <catch2/catch.hpp>
+#include "../ParallelTreeSolution.h"
 #include "../combinatorialUtils.h"
-#include "../Graph.h"
 
 TEST_CASE("Test countEdgesInSubgraph", "[Graph]") {
   SECTION("Test for empty graph") {
@@ -255,8 +255,10 @@ TEST_CASE("Test equality of algorithms", "[Graph][long]") {
       Graph graph(matrix);
       for (size_t j = 0; j <= i; ++j) {
         auto a = graph.findSubgraphWithMaxEdges(j, Graph::AlgorithmType::STACK),
-            b = graph.findSubgraphWithMaxEdges(j, Graph::AlgorithmType::RECURSION);
+            b = graph.findSubgraphWithMaxEdges(j, Graph::AlgorithmType::RECURSION),
+            c = findSubgraphWithMaxEdgesUsingParallelTree(j, graph);
         REQUIRE(graph.countEdgesInSubgraph(a) == graph.countEdgesInSubgraph(b));
+        REQUIRE(graph.countEdgesInSubgraph(b) == graph.countEdgesInSubgraph(c));
       }
     } while (nextBinaryString(str));
   }
