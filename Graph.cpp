@@ -28,7 +28,43 @@ TriangleBoolSquareMatrix Graph::getMatrix() const {
   return matrix;
 }
 
-vector<size_t> Graph::findSubgraphWithMaxEdges(size_t targetVerticesNumber) const {
+vector<size_t> Graph::findSubgraphWithMaxEdges(size_t targetVerticesNumber, AlgorithmType type) const {
+  switch (type) {
+    case AlgorithmType::STACK:
+      return findSubgraphWithMaxEdgesUsingStack(targetVerticesNumber);
+    case AlgorithmType::RECURSION:
+      return findSubgraphWithMaxEdgesUsingRecursion(matrix.getDimension() - targetVerticesNumber, 0,
+                                                    vector<size_t>(targetVerticesNumber)).second;
+  }
+  return vector<size_t>();
+}
+
+void Graph::setMatrix(TriangleBoolSquareMatrix newMatrix) {
+  matrix = std::move(newMatrix);
+}
+
+pair<size_t, vector<size_t>> Graph::findSubgraphWithMaxEdgesUsingRecursion(size_t difference, size_t level,
+                                                                           const vector<size_t> &vertices) const {
+  if (vertices.empty() || level == vertices.size()) {
+    return {countEdgesInSubgraph(vertices), vertices};
+  } else {
+    auto newVertices = vertices;
+    if (level > 0) {
+      newVertices[level] = newVertices[level - 1] + 1;
+    }
+    auto maxValue = findSubgraphWithMaxEdgesUsingRecursion(difference, level + 1, newVertices);
+    while (newVertices[level] < difference + level) {
+      ++newVertices[level];
+      auto currentValue = findSubgraphWithMaxEdgesUsingRecursion(difference, level + 1, newVertices);
+      if (currentValue.first > maxValue.first) {
+        maxValue = currentValue;
+      }
+    }
+    return maxValue;
+  }
+}
+
+vector<size_t> Graph::findSubgraphWithMaxEdgesUsingStack(size_t targetVerticesNumber) const {
   vector<size_t> vertices(targetVerticesNumber);
   iota(vertices.begin(), vertices.end(), 0);
 
@@ -47,10 +83,5 @@ vector<size_t> Graph::findSubgraphWithMaxEdges(size_t targetVerticesNumber) cons
 
   return verticesForMax;
 }
-
-void Graph::setMatrix(TriangleBoolSquareMatrix newMatrix) {
-  matrix = std::move(newMatrix);
-}
-
 
 #pragma clang diagnostic pop

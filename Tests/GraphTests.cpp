@@ -100,16 +100,36 @@ TEST_CASE("Test countEdgesInSubgraph", "[Graph]") {
   }
 }
 
+bool nextBinaryString(vector<bool> &str) {
+  if (str.back()) {
+    size_t i = str.size() - 1;
+    for (; str[i] && i > 0; --i) {
+      str[i] = false;
+    }
+    if (i == 0 && str.front()) {
+      str.front() = false;
+      return false;
+    } else {
+      str[i] = true;
+      return true;
+    }
+  } else {
+    str.back() = true;
+    return true;
+  }
+}
+
 TEST_CASE("Test findSubgraphWithMaxEdges", "[Graph]") {
+  auto algorithm = GENERATE(Graph::AlgorithmType::RECURSION, Graph::AlgorithmType::STACK);
   SECTION("Test for graph with 2 vertices") {
     {
       TriangleBoolSquareMatrix matrix(2);
       Graph graph(matrix);
 
-      REQUIRE(graph.findSubgraphWithMaxEdges(0).empty());
-      auto result = graph.findSubgraphWithMaxEdges(1);
+      REQUIRE(graph.findSubgraphWithMaxEdges(0, algorithm).empty());
+      auto result = graph.findSubgraphWithMaxEdges(1, algorithm);
       REQUIRE((result == vector<size_t>{0} || result == vector<size_t>{1}));
-      REQUIRE(graph.findSubgraphWithMaxEdges(2) == vector<size_t>{0, 1});
+      REQUIRE(graph.findSubgraphWithMaxEdges(2, algorithm) == vector<size_t>{0, 1});
     }
 
     {
@@ -117,10 +137,10 @@ TEST_CASE("Test findSubgraphWithMaxEdges", "[Graph]") {
       matrix.at(1, 0) = true;
       Graph graph(matrix);
 
-      REQUIRE(graph.findSubgraphWithMaxEdges(0).empty());
-      auto result = graph.findSubgraphWithMaxEdges(1);
+      REQUIRE(graph.findSubgraphWithMaxEdges(0, algorithm).empty());
+      auto result = graph.findSubgraphWithMaxEdges(1, algorithm);
       REQUIRE((result == vector<size_t>{0} || result == vector<size_t>{1}));
-      REQUIRE(graph.findSubgraphWithMaxEdges(2) == vector<size_t>{0, 1});
+      REQUIRE(graph.findSubgraphWithMaxEdges(2, algorithm) == vector<size_t>{0, 1});
     }
   }
 
@@ -139,7 +159,7 @@ TEST_CASE("Test findSubgraphWithMaxEdges", "[Graph]") {
     Graph graph(matrix);
 
     auto i = GENERATE(range(1ul, 6ul));
-    auto result = graph.findSubgraphWithMaxEdges(i);
+    auto result = graph.findSubgraphWithMaxEdges(i, algorithm);
     REQUIRE(isSorted(result));
     REQUIRE(result.back() < 5);
     REQUIRE(result.size() == i);
@@ -171,12 +191,13 @@ TEST_CASE("Test findSubgraphWithMaxEdges", "[Graph]") {
     matrix.at(4, 3) = true;
     Graph graph(matrix);
 
-    REQUIRE(graph.findSubgraphWithMaxEdges(0).empty());
-    REQUIRE(graph.countEdgesInSubgraph(graph.findSubgraphWithMaxEdges(1)) == 0);
-    REQUIRE(graph.countEdgesInSubgraph(graph.findSubgraphWithMaxEdges(2)) == 1); // for example {0, 1}
-    REQUIRE(graph.countEdgesInSubgraph(graph.findSubgraphWithMaxEdges(3)) == 3); // for example {0, 1, 2}
-    REQUIRE(graph.countEdgesInSubgraph(graph.findSubgraphWithMaxEdges(4)) == 4); // for example {0, 1, 2, 3}
-    REQUIRE(graph.countEdgesInSubgraph(graph.findSubgraphWithMaxEdges(5)) == 5); // for example {0, 1, 2, 3, 4}
+    REQUIRE(graph.findSubgraphWithMaxEdges(0, algorithm).empty());
+    REQUIRE(graph.countEdgesInSubgraph(graph.findSubgraphWithMaxEdges(1, algorithm)) == 0);
+    REQUIRE(graph.countEdgesInSubgraph(graph.findSubgraphWithMaxEdges(2, algorithm)) == 1); // for example {0, 1}
+    REQUIRE(graph.countEdgesInSubgraph(graph.findSubgraphWithMaxEdges(3, algorithm)) == 3); // for example {0, 1, 2}
+    REQUIRE(graph.countEdgesInSubgraph(graph.findSubgraphWithMaxEdges(4, algorithm)) == 4); // for example {0, 1, 2, 3}
+    REQUIRE(
+        graph.countEdgesInSubgraph(graph.findSubgraphWithMaxEdges(5, algorithm)) == 5); // for example {0, 1, 2, 3, 4}
   }
 
   SECTION("Test for sample graph 2") {
@@ -208,11 +229,35 @@ TEST_CASE("Test findSubgraphWithMaxEdges", "[Graph]") {
     matrix.at(4, 3) = true;
     Graph graph(matrix);
 
-    REQUIRE(graph.findSubgraphWithMaxEdges(0).empty());
-    REQUIRE(graph.countEdgesInSubgraph(graph.findSubgraphWithMaxEdges(1)) == 0);
-    REQUIRE(graph.countEdgesInSubgraph(graph.findSubgraphWithMaxEdges(2)) == 1); // for example {0, 2}
-    REQUIRE(graph.countEdgesInSubgraph(graph.findSubgraphWithMaxEdges(3)) == 3); // for example {0, 2, 4}
-    REQUIRE(graph.countEdgesInSubgraph(graph.findSubgraphWithMaxEdges(4)) == 5); // for example {0, 1, 2, 4}
-    REQUIRE(graph.countEdgesInSubgraph(graph.findSubgraphWithMaxEdges(5)) == 8); // for example {0, 1, 2, 3, 4}
+    REQUIRE(graph.findSubgraphWithMaxEdges(0, algorithm).empty());
+    REQUIRE(graph.countEdgesInSubgraph(graph.findSubgraphWithMaxEdges(1, algorithm)) == 0);
+    REQUIRE(graph.countEdgesInSubgraph(graph.findSubgraphWithMaxEdges(2, algorithm)) == 1); // for example {0, 2}
+    REQUIRE(graph.countEdgesInSubgraph(graph.findSubgraphWithMaxEdges(3, algorithm)) == 3); // for example {0, 2, 4}
+    REQUIRE(graph.countEdgesInSubgraph(graph.findSubgraphWithMaxEdges(4, algorithm)) == 5); // for example {0, 1, 2, 4}
+    REQUIRE(
+        graph.countEdgesInSubgraph(graph.findSubgraphWithMaxEdges(5, algorithm)) == 8); // for example {0, 1, 2, 3, 4}
+  }
+}
+
+TEST_CASE("Test equality of algorithms", "[Graph][long]") {
+  for (size_t i = 2; i < 6; ++i) {
+    vector<bool> str(i * (i - 1) / 2);
+    do {
+      TriangleBoolSquareMatrix matrix(i);
+      size_t counter = 0;
+      for (size_t j = 1; j < i; ++j) {
+        for (size_t k = 0; k < j; ++k) {
+          matrix.at(j, k) = str[counter];
+          ++counter;
+        }
+      }
+
+      Graph graph(matrix);
+      for (size_t j = 0; j <= i; ++j) {
+        auto a = graph.findSubgraphWithMaxEdges(j, Graph::AlgorithmType::STACK),
+            b = graph.findSubgraphWithMaxEdges(j, Graph::AlgorithmType::RECURSION);
+        REQUIRE(graph.countEdgesInSubgraph(a) == graph.countEdgesInSubgraph(b));
+      }
+    } while (nextBinaryString(str));
   }
 }

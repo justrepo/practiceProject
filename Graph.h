@@ -8,8 +8,17 @@
 
 #include "TriangleBoolSquareMatrix.h"
 
+using std::pair;
+
 class Graph {
   TriangleBoolSquareMatrix matrix;
+
+  [[nodiscard]] vector<size_t> findSubgraphWithMaxEdgesUsingStack(size_t targetVerticesNumber) const;
+
+  [[nodiscard]] pair<size_t, vector<size_t>> findSubgraphWithMaxEdgesUsingRecursion(size_t targetVerticesNumber,
+                                                                                    size_t level,
+                                                                                    const vector<size_t> &vertices) const;
+
 public:
   explicit Graph(TriangleBoolSquareMatrix matrix);
 
@@ -19,7 +28,11 @@ public:
 
   [[nodiscard]] TriangleBoolSquareMatrix getMatrix() const;
 
-  [[nodiscard]] vector<size_t> findSubgraphWithMaxEdges(size_t targetVerticesNumber) const;
+  enum class AlgorithmType {
+    STACK, RECURSION
+  };
+
+  [[nodiscard]] vector<size_t> findSubgraphWithMaxEdges(size_t targetVerticesNumber, AlgorithmType type) const;
 };
 
 #pragma clang diagnostic pop

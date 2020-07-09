@@ -39,8 +39,12 @@ void printInfo() {
 }
 
 void printUsage(const string &programPath) {
-  cout << "Usage: " << programPath << " matrixFileName numberOfVertices [numberOfRepeats] [isMatrixInTextForm]" << endl;
+  cout << "Usage: " << programPath
+       << " matrixFileName numberOfVertices [algorithm] [numberOfRepeats] [matrixInTextForm]\n" <<
+       " where algorithm can be 1 for recursion, 2 for stack, stack is set by default" << endl;
 }
+
+#include <cmath>
 
 int main(int argc, char **argv) {
   if (argc == 1) {
@@ -175,8 +179,22 @@ int main(int argc, char **argv) {
             if (n > matrix.getDimension()) {
               cout << "Subgraph cannot contain more vertices than the graph" << endl;
             } else {
+              cout << "Choise algorithm:\n"
+                   << "1 - recursion\n"
+                   << "else - stack" << endl;
+
+              cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+              input = static_cast<char>(cin.get());
+
+              Graph::AlgorithmType type;
+              if (input == '1') {
+                type = Graph::AlgorithmType::RECURSION;
+              } else {
+                type = Graph::AlgorithmType::STACK;
+              }
+
               auto timeBeforeStart = timer::now();
-              auto vertices = graph.findSubgraphWithMaxEdges(n);
+              auto vertices = graph.findSubgraphWithMaxEdges(n, type);
               auto timeAfterEnd = timer::now();
               cout << "Finished in " << (timeAfterEnd - timeBeforeStart).count() << "ns = "
                    << double((timeAfterEnd - timeBeforeStart).count()) * 1e-9 << "s" << endl;
@@ -201,7 +219,7 @@ int main(int argc, char **argv) {
       }
       input = static_cast<char>(cin.get());
     }
-  } else if (argc == 2 || argc > 5) {
+  } else if (argc == 2 || argc > 6) {
     printUsage(argv[0]);
   } else {
     string filename = argv[1], arg2 = argv[2];
@@ -214,17 +232,30 @@ int main(int argc, char **argv) {
       printUsage(argv[0]);
       return 0;
     }
+    Graph::AlgorithmType type = Graph::AlgorithmType::STACK;
     if (argc >= 4) {
       string arg3 = argv[3];
-      try {
-        repeatsNum = stoul(arg3);
-      } catch (const exception &e) {
-        cout << arg3 << " isn't a valid number" << endl;
+      if (arg3 == "1") {
+        type = Graph::AlgorithmType::RECURSION;
+      } else if (arg3 == "2") {
+        type = Graph::AlgorithmType::STACK;
+      } else {
+        cout << arg3 << " isn't a valid algorithm" << endl;
         printUsage(argv[0]);
         return 0;
       }
     }
-    if (argc == 5) {
+    if (argc >= 5) {
+      string arg4 = argv[4];
+      try {
+        repeatsNum = stoul(arg4);
+      } catch (const exception &e) {
+        cout << arg4 << " isn't a valid number" << endl;
+        printUsage(argv[0]);
+        return 0;
+      }
+    }
+    if (argc == 6) {
       binaryFile = false;
     }
     ifstream in(filename);
@@ -245,7 +276,7 @@ int main(int argc, char **argv) {
       vector<size_t> vertices;
       for (size_t i = 0; i < repeatsNum; ++i) {
         auto timeBeforeStart = timer::now();
-        vertices = graph.findSubgraphWithMaxEdges(verticesNum);
+        vertices = graph.findSubgraphWithMaxEdges(verticesNum, type);
         auto timeAfterEnd = timer::now();
         result += size_t((timeAfterEnd - timeBeforeStart).count()) / repeatsNum;
       }
