@@ -17,7 +17,7 @@ using std::bernoulli_distribution;
 
 TriangleBoolSquareMatrix::TriangleBoolSquareMatrix(size_t n) : n(n), data(n * (n - 1) / 2) {}
 
-bool TriangleBoolSquareMatrix::at(size_t i, size_t j) const {
+int TriangleBoolSquareMatrix::at(size_t i, size_t j) const {
   if (i > 0 && i < n && j < i) {
     return data[i * (i - 1) / 2 + j];
   } else {
@@ -26,11 +26,11 @@ bool TriangleBoolSquareMatrix::at(size_t i, size_t j) const {
   }
 }
 
-bool TriangleBoolSquareMatrix::unsafeAt(size_t i, size_t j) const {
+int TriangleBoolSquareMatrix::unsafeAt(size_t i, size_t j) const {
   return data[i * (i - 1) / 2 + j];
 }
 
-std::vector<bool>::reference TriangleBoolSquareMatrix::at(size_t i, size_t j) {
+int &TriangleBoolSquareMatrix::at(size_t i, size_t j) {
   if (i > 0 && i < n && j < i) {
     return data[i * (i - 1) / 2 + j];
   } else {
@@ -39,7 +39,7 @@ std::vector<bool>::reference TriangleBoolSquareMatrix::at(size_t i, size_t j) {
   }
 }
 
-std::vector<bool>::reference TriangleBoolSquareMatrix::unsafeAt(size_t i, size_t j) {
+int &TriangleBoolSquareMatrix::unsafeAt(size_t i, size_t j) {
   return data[i * (i - 1) / 2 + j];
 }
 
@@ -168,7 +168,7 @@ void TriangleBoolSquareMatrix::readFromStreamTriangle(istream &in) {
   for (size_t i = 1; i < n; ++i) {
     for (size_t j = 0; j < i; ++j) {
       in >> read;
-      at(i, j) = read;
+      at(i, j) = read != 0;
     }
   }
 }
@@ -187,7 +187,7 @@ void TriangleBoolSquareMatrix::readFromStreamFull(istream &in) {
     for (size_t j = 0; j < n; ++j) {
       in >> read;
       if (i > 0 && i > j) {
-        at(i, j) = read;
+        at(i, j) = read != 0;
       }
     }
   }

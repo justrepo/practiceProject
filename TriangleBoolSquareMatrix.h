@@ -15,7 +15,7 @@ using std::istream;
 
 class TriangleBoolSquareMatrix {
   size_t n = 0;
-  vector<bool> data;
+  vector<int> data;
 public:
   TriangleBoolSquareMatrix() = default;
 
@@ -27,13 +27,13 @@ public:
 
   [[nodiscard]] size_t getDimension() const;
 
-  [[nodiscard]] bool at(size_t i, size_t j) const;
+  [[nodiscard]] int at(size_t i, size_t j) const;
 
-  [[nodiscard]] bool unsafeAt(size_t i, size_t j) const;
+  [[nodiscard]] int unsafeAt(size_t i, size_t j) const;
 
-  std::vector<bool>::reference at(size_t i, size_t j);
+  int &at(size_t i, size_t j);
 
-  std::vector<bool>::reference unsafeAt(size_t i, size_t j);
+  int &unsafeAt(size_t i, size_t j);
 
   friend ostream &operator<<(ostream &out, const TriangleBoolSquareMatrix &matrix);
 
