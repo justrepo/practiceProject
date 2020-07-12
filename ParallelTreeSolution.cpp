@@ -78,9 +78,10 @@ public:
   }
 };
 
-vector<size_t> findSubgraphWithMaxEdgesUsingParallelTree(size_t targetVerticesNumber, const Graph &graph) {
+vector<size_t> findSubgraphWithMaxEdgesUsingParallelTree(size_t targetVerticesNumber, const Graph &graph,
+                                                         size_t threads) {
   CombinationRecord initialRecord(graph);
   unique_ptr<Record> bestSolution = parallelTree(make_unique<CombinationTreeNode>(graph, targetVerticesNumber),
-                                                 initialRecord);
+                                                 initialRecord, static_cast<unsigned int>(threads));
   return dynamic_cast<const CombinationRecord *>(bestSolution.get())->vertices;
 }

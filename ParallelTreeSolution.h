@@ -6,4 +6,5 @@
 
 #include "Graph.h"
 
-vector<size_t> findSubgraphWithMaxEdgesUsingParallelTree(size_t targetVerticesNumber, const Graph &graph);
+vector<size_t> findSubgraphWithMaxEdgesUsingParallelTree(size_t targetVerticesNumber, const Graph &graph,
+                                                         size_t threads = 0);

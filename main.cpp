@@ -41,8 +41,9 @@ void printInfo() {
 
 void printUsage(const string &programPath) {
   cout << "Usage: " << programPath
-       << " matrixFileName numberOfVertices [algorithm] [numberOfRepeats] [matrixInTextForm]\n" <<
-       " where algorithm can be 1 for recursion, 2 for stack, 3 for parallel tree, stack is set by default" << endl;
+       << " matrixFileName numberOfVertices [algorithm numberOfThreads] [numberOfRepeats] [matrixInTextForm]\n" <<
+       " where algorithm can be 1 for recursion, 2 for stack, 3 for parallel tree, stack is set by default\n" <<
+       " numberOfThreads is required only if algorithm - parallel tree" << endl;
 }
 
 int main(int argc, char **argv) {
@@ -182,8 +183,7 @@ int main(int argc, char **argv) {
               vertices.erase(std::unique(vertices.begin(), vertices.end()), vertices.end());
 
               cout << "Subgraph with vertices " << vertices << " has " << graph.countEdgesInSubgraph(vertices)
-                   << " edges"
-                   << endl;
+                   << " edges" << endl;
             }
           }
             break;
@@ -202,6 +202,12 @@ int main(int argc, char **argv) {
               cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
               input = static_cast<char>(cin.get());
 
+              size_t numberOfThreads = 0;
+              if (input == '2') {
+                cout << "Enter number of threads >";
+                cin >> numberOfThreads;
+              }
+
               Graph::AlgorithmType type;
               if (input == '1') {
                 type = Graph::AlgorithmType::RECURSION;
@@ -212,7 +218,7 @@ int main(int argc, char **argv) {
               vector<size_t> vertices;
               auto timeBeforeStart = timer::now();
               if (input == '2') {
-                vertices = findSubgraphWithMaxEdgesUsingParallelTree(n, graph);
+                vertices = findSubgraphWithMaxEdgesUsingParallelTree(n, graph, numberOfThreads);
               } else {
                 vertices = graph.findSubgraphWithMaxEdges(n, type);
               }
@@ -240,11 +246,11 @@ int main(int argc, char **argv) {
       }
       input = static_cast<char>(cin.get());
     }
-  } else if (argc == 2 || argc > 6) {
+  } else if (argc == 2 || argc > 7) {
     printUsage(argv[0]);
   } else {
     string filename = argv[1], arg2 = argv[2];
-    size_t verticesNum, repeatsNum = 1;
+    size_t verticesNum, repeatsNum = 1, numberOfThreads = 0;
     bool binaryFile = true;
     try {
       verticesNum = stoul(arg2);
@@ -269,8 +275,22 @@ int main(int argc, char **argv) {
         return 0;
       }
     }
-    if (argc >= 5) {
+    if (argc > 6 + parallelTree) {
+      printUsage(argv[0]);
+      return 0;
+    }
+    if (parallelTree) {
       string arg4 = argv[4];
+      try {
+        numberOfThreads = stoul(arg4);
+      } catch (const exception &e) {
+        cout << arg4 << " isn't a valid number" << endl;
+        printUsage(argv[0]);
+        return 0;
+      }
+    }
+    if (argc >= 5 + parallelTree) {
+      string arg4 = argv[4 + parallelTree];
       try {
         repeatsNum = stoul(arg4);
       } catch (const exception &e) {
@@ -279,7 +299,7 @@ int main(int argc, char **argv) {
         return 0;
       }
     }
-    if (argc == 6) {
+    if (argc == 6 + parallelTree) {
       binaryFile = false;
     }
     ifstream in(filename);
@@ -301,7 +321,7 @@ int main(int argc, char **argv) {
       for (size_t i = 0; i < repeatsNum; ++i) {
         auto timeBeforeStart = timer::now();
         if (parallelTree) {
-          vertices = findSubgraphWithMaxEdgesUsingParallelTree(verticesNum, graph);
+          vertices = findSubgraphWithMaxEdgesUsingParallelTree(verticesNum, graph, numberOfThreads);
         } else {
           vertices = graph.findSubgraphWithMaxEdges(verticesNum, type);
         }
