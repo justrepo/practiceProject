@@ -123,7 +123,7 @@ int main(int argc, char **argv) {
             cin >> filename;
             ifstream in(filename);
             if (in) {
-              matrix.readFromStream(in);
+              matrix.readFromStreamFull(in);
               graph.setMatrix(matrix);
             } else {
               cout << "Something wrong with file" << endl;
@@ -136,7 +136,7 @@ int main(int argc, char **argv) {
             cin >> filename;
             ofstream out(filename);
             if (out) {
-              matrix.writeToStream(out);
+              matrix.writeToStreamFull(out);
             } else {
               cout << "Something wrong with file" << endl;
             }
